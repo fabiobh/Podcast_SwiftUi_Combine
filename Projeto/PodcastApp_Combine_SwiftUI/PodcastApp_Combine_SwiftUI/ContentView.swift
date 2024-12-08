@@ -6,10 +6,10 @@
 //
 
 import SwiftUI
+import Combine
 
 struct ContentView: View {
-    
-    let apiKey = "6a98e80f4ba54b7cb7b8578fec57755a"
+    @StateObject private var podcastService = PodcastService()
     
     var body: some View {
         ScrollView {
@@ -17,7 +17,7 @@ struct ContentView: View {
                 // Top Bar
                 HStack {
                     // Title
-                    Text("PodCast")
+                    Text("Best PodCast")
                         .font(.largeTitle)
                         .bold()
                         .padding(.horizontal)
@@ -48,10 +48,9 @@ struct ContentView: View {
 
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 15) {
-                        PodcastCardView(imageName: "image_podcast1", title: "Podcast Recomendado")
-                        PodcastCardView(imageName: "podcast2", title: "Lado B")
-                        PodcastCardView(imageName: "image_podcast1", title: "Podcast Recomendado")
-                        PodcastCardView(imageName: "image_podcast1", title: "Podcast Recomendado")
+                        ForEach(podcastService.podcasts) { podcast in
+                            PodcastCardView(imageUrl: podcast.imageUrl, title: podcast.title)
+                        }
                     }
                     .padding(.horizontal)
                 }
@@ -69,20 +68,38 @@ struct ContentView: View {
                 .padding(.horizontal)
             }
         }
+        .onAppear {
+            podcastService.fetchPodcasts()
+        }
     }
 }
 
 struct PodcastCardView: View {
-    var imageName: String
+    var imageUrl: String
     var title: String
 
     var body: some View {
         VStack {
-            Image(imageName)
-                .resizable()
-                .aspectRatio(contentMode: .fill)
-                .frame(width: 150, height: 150)
-                .clipped()
+            AsyncImage(url: URL(string: imageUrl)) { phase in
+                switch phase {
+                case .empty:
+                    ProgressView()
+                        .frame(width: 150, height: 150)
+                case .success(let image):
+                    image
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: 150, height: 150)
+                        .clipped()
+                case .failure(_):
+                    Image(systemName: "photo")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 150, height: 150)
+                @unknown default:
+                    EmptyView()
+                }
+            }
             Text(title)
                 .font(.caption)
                 .lineLimit(1)
