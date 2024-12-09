@@ -19,6 +19,18 @@ struct PodcastEpisode: Identifiable, Decodable {
         case publishedAt = "pub_date_ms"
         case duration = "audio_length_sec"
     }
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(String.self, forKey: .id)
+        title = try container.decode(String.self, forKey: .title)
+        let rawDescription = try container.decode(String.self, forKey: .description)
+        description = rawDescription.removeHTMLTags()
+        audio = try container.decode(String.self, forKey: .audio)
+        image = try container.decode(String.self, forKey: .image)
+        publishedAt = try container.decode(Int64.self, forKey: .publishedAt)
+        duration = try container.decode(Int.self, forKey: .duration)
+    }
 }
 
 struct PodcastDetailResponse: Decodable {
@@ -83,7 +95,7 @@ struct EpisodeDetailCard: View {
     let episode: PodcastEpisode
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 2) {
             AsyncImage(url: URL(string: episode.image)) { phase in
                 switch phase {
                 case .empty:
@@ -106,29 +118,39 @@ struct EpisodeDetailCard: View {
             }
             .cornerRadius(10)
             
-            Text(episode.title)
-                .font(.headline)
+            Spacer()
             
-            Text(episode.description)
-                .font(.subheadline)
-                .foregroundColor(.gray)
-                .lineLimit(3)
-            
-            HStack {
-                Text(formatDate(episode.publishedAt))
-                    .font(.caption)
-                    .foregroundColor(.gray)
+            VStack(alignment: .leading, spacing: 8) {
                 
-                Spacer()
+                Text(episode.title)
+                    .font(.headline)
+                    .lineLimit(2)
                 
-                Text(formatDuration(episode.duration))
-                    .font(.caption)
+                Text(episode.description)
+                    .font(.subheadline)
                     .foregroundColor(.gray)
+                    .lineLimit(3)
+                
+                HStack {
+                    Text(formatDate(episode.publishedAt))
+                        .font(.caption)
+                        .foregroundColor(.gray)
+                    
+                    Spacer()
+                    
+                    Text(formatDuration(episode.duration))
+                        .font(.caption)
+                        .foregroundColor(.gray)
+                }
             }
+            .padding(.horizontal, 16)
+            .padding(.bottom, 16)
         }
         .background(Color.white)
         .cornerRadius(10)
         .shadow(radius: 5)
+        .padding(.horizontal)
+        .padding(.vertical, 4)
     }
     
     private func formatDate(_ timestamp: Int64) -> String {
@@ -147,5 +169,19 @@ struct EpisodeDetailCard: View {
         } else {
             return "\(minutes)min"
         }
+    }
+}
+
+extension String {
+    func removeHTMLTags() -> String {
+        let stripped = self.replacingOccurrences(of: "<[^>]+>", with: "", options: .regularExpression)
+        return stripped
+            .replacingOccurrences(of: "&nbsp;", with: " ")
+            .replacingOccurrences(of: "&amp;", with: "&")
+            .replacingOccurrences(of: "&lt;", with: "<")
+            .replacingOccurrences(of: "&gt;", with: ">")
+            .replacingOccurrences(of: "&quot;", with: "\"")
+            .replacingOccurrences(of: "&#39;", with: "'")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
     }
 }
