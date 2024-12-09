@@ -13,6 +13,7 @@ enum APIConfig {
             case .bestPodcasts:
                 return URL(string: "\(APIConfig.baseURL)/best_podcasts")
             case .podcastDetails(let id):
+                print("x: \(APIConfig.baseURL)/podcasts/\(id)?sort=recent_first")
                 return URL(string: "\(APIConfig.baseURL)/podcasts/\(id)?sort=recent_first")
             }
         }

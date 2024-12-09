@@ -11,62 +11,75 @@ struct EpisodeDetailCard: View {
     let episode: PodcastEpisode
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 2) {
-            AsyncImage(url: URL(string: episode.image)) { phase in
-                switch phase {
-                case .empty:
-                    ProgressView()
-                        .frame(height: 200)
-                case .success(let image):
-                    image
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(height: 200)
-                        .clipped()
-                case .failure:
-                    Image(systemName: "photo")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(height: 200)
-                @unknown default:
-                    EmptyView()
+        NavigationLink {
+            Group {
+                if let audioURL = URL(string: episode.audio) {
+                    PodcastPlayerView(episodeTitle: episode.title, audioURL: audioURL)
+                } else {
+                    Text("Invalid audio URL")
                 }
             }
+            .onAppear {
+                print("Audio URL: " + episode.audio)
+            }
+        } label: {
+            VStack(alignment: .leading, spacing: 2) {
+                AsyncImage(url: URL(string: episode.image)) { phase in
+                    switch phase {
+                    case .empty:
+                        ProgressView()
+                            .frame(height: 200)
+                    case .success(let image):
+                        image
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(height: 200)
+                            .clipped()
+                    case .failure:
+                        Image(systemName: "photo")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(height: 200)
+                    @unknown default:
+                        EmptyView()
+                    }
+                }
+                .cornerRadius(10)
+                
+                Spacer()
+                
+                VStack(alignment: .leading, spacing: 8) {
+                    
+                    Text(episode.title)
+                        .font(.headline)
+                        .lineLimit(2)
+                    
+                    Text(episode.description)
+                        .font(.subheadline)
+                        .foregroundColor(.gray)
+                        .lineLimit(3)
+                    
+                    HStack {
+                        Text(formatDate(episode.publishedAt))
+                            .font(.caption)
+                            .foregroundColor(.gray)
+                        
+                        Spacer()
+                        
+                        Text(formatDuration(episode.duration))
+                            .font(.caption)
+                            .foregroundColor(.gray)
+                    }
+                }
+                .padding(.horizontal, 16)
+                .padding(.bottom, 16)
+            }
+            .background(Color.white)
             .cornerRadius(10)
-            
-            Spacer()
-            
-            VStack(alignment: .leading, spacing: 8) {
-                
-                Text(episode.title)
-                    .font(.headline)
-                    .lineLimit(2)
-                
-                Text(episode.description)
-                    .font(.subheadline)
-                    .foregroundColor(.gray)
-                    .lineLimit(3)
-                
-                HStack {
-                    Text(formatDate(episode.publishedAt))
-                        .font(.caption)
-                        .foregroundColor(.gray)
-                    
-                    Spacer()
-                    
-                    Text(formatDuration(episode.duration))
-                        .font(.caption)
-                        .foregroundColor(.gray)
-                }
-            }
-            .padding(.horizontal, 16)
-            .padding(.bottom, 16)
+            .shadow(radius: 5)
+            .padding(.horizontal)
+            .padding(.vertical, 4)
         }
-        .background(Color.white)
-        .cornerRadius(10)
-        .shadow(radius: 5)
-        .padding(.horizontal)
-        .padding(.vertical, 4)
     }
     
     private func formatDate(_ timestamp: Int64) -> String {
