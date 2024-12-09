@@ -6,10 +6,7 @@ class PodcastDetailViewModel: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
     
     func fetchEpisodes(podcastId: String) {
-        guard let url = URL(string: "https://listen-api.listennotes.com/api/v2/podcasts/\(podcastId)?sort=recent_first") else { return }
-        
-        var request = URLRequest(url: url)
-        request.addValue(PodcastService.apiKey, forHTTPHeaderField: "X-ListenAPI-Key")
+        guard let request = APIConfig.createRequest(for: .podcastDetails(id: podcastId)) else { return }
         
         URLSession.shared.dataTaskPublisher(for: request)
             .map(\.data)
@@ -25,7 +22,6 @@ class PodcastDetailViewModel: ObservableObject {
             .store(in: &cancellables)
     }
 }
-
 
 extension String {
     func removeHTMLTags() -> String {
