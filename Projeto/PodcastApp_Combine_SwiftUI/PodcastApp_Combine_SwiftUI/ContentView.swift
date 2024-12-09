@@ -17,7 +17,7 @@ struct ContentView: View {
                 // Top Bar
                 HStack {
                     // Title
-                    Text("Best PodCast")
+                    Text("PodCaster")
                         .font(.largeTitle)
                         .bold()
                         .padding(.horizontal)
@@ -41,7 +41,7 @@ struct ContentView: View {
                 */
 
                 // Podcasts Section
-                Text("Podcasts")
+                Text("Best Podcasts")
                     .font(.title2)
                     .bold()
                     .padding(.horizontal)
