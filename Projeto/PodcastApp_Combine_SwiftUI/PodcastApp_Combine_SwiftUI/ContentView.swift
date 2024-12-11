@@ -27,7 +27,7 @@ struct ContentView: View {
                             .bold()
                             .padding(.horizontal)
                         Spacer()
-                        Image(systemName: "magnifyingglass")
+                        //Image(systemName: "magnifyingglass")
                         //Image(systemName: "line.horizontal.3")
                     }
                     .padding()
@@ -82,6 +82,7 @@ struct ContentView: View {
             .onAppear {
                 podcastService.fetchPodcasts()
             }
+            /*
             .overlay(
                 VStack {
                     Spacer()
@@ -100,6 +101,7 @@ struct ContentView: View {
                     
                 }
             )
+            */
         }
     }
 
