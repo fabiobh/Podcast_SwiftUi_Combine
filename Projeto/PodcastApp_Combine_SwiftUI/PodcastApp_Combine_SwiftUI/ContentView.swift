@@ -82,26 +82,6 @@ struct ContentView: View {
             .onAppear {
                 podcastService.fetchPodcasts()
             }
-            /*
-            .overlay(
-                VStack {
-                    Spacer()
-                    
-                    Button(action: {
-                        playAudio()
-                    }) {
-                        Text("Play Audio")
-                            .font(.headline)
-                            .foregroundColor(.white)
-                            .padding()
-                            .background(Color.green)
-                            .cornerRadius(10)
-                    }
-                    .padding()
-                    
-                }
-            )
-            */
         }
     }
 
