@@ -1,29 +1,58 @@
 import SwiftUI
+import Combine
 import AVFoundation
 
 struct PodcastPlayerView: View {
     var episodeTitle: String
     var audioURL: URL
     
+    public init(episodeTitle: String, audioURL: URL) {
+        self.episodeTitle = episodeTitle
+        self.audioURL = audioURL
+    }
+    
     @State private var isPlaying = false
     @State private var playbackTime: TimeInterval = 0
+    @State private var duration: TimeInterval = 0
     @State private var showAlert = false
+    @State private var isEditing = false
+    
+    private var cancellables = Set<AnyCancellable>()
     
     @StateObject private var playerManager = PlayerManager()
     
     var body: some View {
         VStack {
-            
             Text(episodeTitle)
                 .font(.largeTitle)
                 .padding()
-            
-            Slider(value: $playbackTime, in: 0...((playerManager.player?.currentItem?.duration.seconds ?? 0.0) > 0 ? playerManager.player?.currentItem?.duration.seconds ?? 0.0 : 1.0), onEditingChanged: { editing in
-                if !editing {
-                    playerManager.seek(to: CMTime(seconds: playbackTime, preferredTimescale: 600))
+            /*
+            Slider(
+                value: $playbackTime,
+                in: 0...max(duration, 1),
+                onEditingChanged: { editing in
+                    if !editing {
+                        playerManager.seek(to: CMTime(seconds: playbackTime, preferredTimescale: 600))
+                    }
                 }
-            })
+            )
             .padding()
+            */
+            
+            Slider(
+                value: Binding(
+                    get: { Double(playbackTime) },
+                    set: { newValue in
+                        playbackTime = TimeInterval(newValue)
+                        if !isEditing {
+                            playerManager.seek(to: CMTime(seconds: newValue, preferredTimescale: 600))
+                        }
+                    }
+                ),
+                in: 0...Double(max(playerManager.duration, 1))
+            ) { editing in
+                isEditing = editing
+            }
             
             Text(formatTime(playbackTime))
                 .font(.headline)
@@ -69,6 +98,7 @@ struct PodcastPlayerView: View {
         .onAppear {
             playerManager.setupPlayer(with: audioURL)
             setupTimeObserver()
+            // setupDurationObserver()
         }
         .onDisappear {
             playerManager.removeTimeObserver()
@@ -80,6 +110,24 @@ struct PodcastPlayerView: View {
             playbackTime = time
         }
     }
+    
+    /*
+    private mutating func setupDurationObserver() {
+        playerManager.player?.currentItem?.publisher(for: \.duration)
+            .map { duration -> TimeInterval in
+                let timeInterval = CMTimeGetSeconds(duration)
+                return timeInterval.isNaN ? 0 : timeInterval
+            }
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] newDuration in
+                guard let self = self else {return}
+                DispatchQueue.main.async {
+                    self.duration = newDuration
+                }
+            }
+            .store(in: &cancellables)
+    }
+    */
     
     private func togglePlayback() {
         if isPlaying {
@@ -94,48 +142,5 @@ struct PodcastPlayerView: View {
         let minutes = Int(time / 60)
         let seconds = Int(time.truncatingRemainder(dividingBy: 60))
         return String(format: "%02d:%02d", minutes, seconds)
-    }
-}
-
-class PlayerManager: ObservableObject {
-    static let shared = PlayerManager()
-    var player: AVPlayer?
-    private var timeObserverToken: Any?
-    
-    func setupPlayer(with url: URL) {
-        if player == nil || player?.currentItem?.asset as? AVURLAsset != AVURLAsset(url: url) {
-            player = AVPlayer(url: url)
-        }
-    }
-    
-    func play() {
-        player?.play()
-    }
-    
-    func pause() {
-        player?.pause()
-    }
-    
-    func seek(to time: CMTime) {
-        player?.seek(to: time)
-    }
-    
-    func seek(by seconds: TimeInterval) {
-        guard let currentTime = player?.currentTime() else { return }
-        let newTime = CMTime(seconds: currentTime.seconds + seconds, preferredTimescale: 600)
-        player?.seek(to: newTime)
-    }
-    
-    func addPeriodicTimeObserver(callback: @escaping (TimeInterval) -> Void) {
-        timeObserverToken = player?.addPeriodicTimeObserver(forInterval: CMTime(seconds: 1, preferredTimescale: 600), queue: .main) { time in
-            callback(time.seconds)
-        }
-    }
-    
-    func removeTimeObserver() {
-        if let token = timeObserverToken {
-            player?.removeTimeObserver(token)
-            timeObserverToken = nil
-        }
     }
 }

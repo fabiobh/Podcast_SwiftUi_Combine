@@ -17,6 +17,7 @@
 		8B0753C82D06987C002555A5 /* PodcastCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B0753C72D06987C002555A5 /* PodcastCardView.swift */; };
 		8B0753CA2D0698A3002555A5 /* EpisodeCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B0753C92D0698A3002555A5 /* EpisodeCardView.swift */; };
 		8B0753CD2D069CC8002555A5 /* APIConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B0753CB2D069CC8002555A5 /* APIConfig.swift */; };
+		8B26089C2D1B4402003C96B4 /* PlayerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B26089B2D1B4401003C96B4 /* PlayerManager.swift */; };
 		8B43844B2D1A601B000B9A84 /* PodcastResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B43844A2D1A601B000B9A84 /* PodcastResponse.swift */; };
 		8B43844D2D1A6623000B9A84 /* CuratedPodcastResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B43844C2D1A6623000B9A84 /* CuratedPodcastResponse.swift */; };
 		8BAA46172D078FD6008B57DF /* PodcastPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BAA46162D078FD6008B57DF /* PodcastPlayerView.swift */; };
@@ -37,6 +38,8 @@
 		8B0753C72D06987C002555A5 /* PodcastCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PodcastCardView.swift; sourceTree = "<group>"; };
 		8B0753C92D0698A3002555A5 /* EpisodeCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EpisodeCardView.swift; sourceTree = "<group>"; };
 		8B0753CB2D069CC8002555A5 /* APIConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIConfig.swift; sourceTree = "<group>"; };
+		8B26089B2D1B4401003C96B4 /* PlayerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerManager.swift; sourceTree = "<group>"; };
+		8B26089D2D1B4497003C96B4 /* PodcastApp-Combine-SwiftUI-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "PodcastApp-Combine-SwiftUI-Info.plist"; sourceTree = SOURCE_ROOT; };
 		8B43844A2D1A601B000B9A84 /* PodcastResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PodcastResponse.swift; sourceTree = "<group>"; };
 		8B43844C2D1A6623000B9A84 /* CuratedPodcastResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CuratedPodcastResponse.swift; sourceTree = "<group>"; };
 		8BAA46162D078FD6008B57DF /* PodcastPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PodcastPlayerView.swift; sourceTree = "<group>"; };
@@ -73,6 +76,7 @@
 		8B0753B92D064191002555A5 /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				8B26089B2D1B4401003C96B4 /* PlayerManager.swift */,
 				8B0753B82D064191002555A5 /* PodcastService.swift */,
 			);
 			path = Services;
@@ -125,6 +129,7 @@
 		8BC0DEBC2D061CA200CE56C1 /* PodcastApp_Combine_SwiftUI */ = {
 			isa = PBXGroup;
 			children = (
+				8B26089D2D1B4497003C96B4 /* PodcastApp-Combine-SwiftUI-Info.plist */,
 				8B0753CC2D069CC8002555A5 /* Config */,
 				8B0753C22D06942E002555A5 /* View */,
 				8B0753C12D06940C002555A5 /* ViewModel */,
@@ -222,6 +227,7 @@
 				8BC0DEC02D061CA200CE56C1 /* ContentView.swift in Sources */,
 				8B0753C82D06987C002555A5 /* PodcastCardView.swift in Sources */,
 				8B43844B2D1A601B000B9A84 /* PodcastResponse.swift in Sources */,
+				8B26089C2D1B4402003C96B4 /* PlayerManager.swift in Sources */,
 				8B0753CA2D0698A3002555A5 /* EpisodeCardView.swift in Sources */,
 				8BC0DEBE2D061CA200CE56C1 /* PodcastApp_Combine_SwiftUIApp.swift in Sources */,
 				8B43844D2D1A6623000B9A84 /* CuratedPodcastResponse.swift in Sources */,
@@ -367,6 +373,7 @@
 				DEVELOPMENT_TEAM = 4843ZXVW46;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "PodcastApp-Combine-SwiftUI-Info.plist";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -397,6 +404,7 @@
 				DEVELOPMENT_TEAM = 4843ZXVW46;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "PodcastApp-Combine-SwiftUI-Info.plist";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
