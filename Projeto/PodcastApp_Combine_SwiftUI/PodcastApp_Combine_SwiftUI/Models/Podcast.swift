@@ -11,7 +11,3 @@ struct Podcast: Codable, Identifiable {
         case imageUrl = "image"
     }
 }
-
-struct PodcastResponse: Codable {
-    let podcasts: [Podcast]
-}

@@ -12,6 +12,7 @@ import AVFoundation
 
 struct ContentView: View {
     @StateObject private var podcastService = PodcastService()
+    
     @State private var player: AVPlayer?
     @State private var playbackTime: Double = 0.0
     
@@ -63,8 +64,26 @@ struct ContentView: View {
                         }
                         .padding(.horizontal)
                     }
+                    
+                    Text("Curated Podcasts")
+                        .font(.title2)
+                        .bold()
+                        .padding(.horizontal)
+                    
+                    ScrollView(.horizontal, showsIndicators: false) {
+                                            HStack(spacing: 15) {
+                                                ForEach(podcastService.curatedPodcasts) { podcast in
+                                                    NavigationLink {
+                                                        PodcastDetailView(podcastId: podcast.id, podcastTitle: podcast.title)
+                                                    } label: {
+                                                        PodcastCardView(imageUrl: podcast.imageUrl, title: podcast.title)
+                                                    }
+                                                }
+                                            }
+                                            .padding(.horizontal)
+                                        }
 
-                    // New Episodes Section
+                    /*
                     Text("New Episodes")
                         .font(.title2)
                         .bold()
@@ -74,14 +93,16 @@ struct ContentView: View {
                         EpisodeCardView(imageName: "image_podcast1")
                         EpisodeCardView(imageName: "episode2")
                     }
-                    
                     .padding(.horizontal)
+                    */
                 }
             }
-            .padding(.bottom, 50) // Add padding to make room for the button
+            .padding(.bottom, 50)
             .onAppear {
                 podcastService.fetchPodcasts()
+                podcastService.fetchCuratedPodcasts()
             }
+            
         }
     }
 

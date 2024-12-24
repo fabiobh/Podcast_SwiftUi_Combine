@@ -6,12 +6,15 @@ enum APIConfig {
     
     enum Endpoints {
         case bestPodcasts
+        case curatedPodcasts
         case podcastDetails(id: String)
         
         var url: URL? {
             switch self {
             case .bestPodcasts:
                 return URL(string: "\(APIConfig.baseURL)/best_podcasts")
+            case .curatedPodcasts:
+                return URL(string: "\(APIConfig.baseURL)/curated_podcasts?page=1")
             case .podcastDetails(let id):
                 print("x: \(APIConfig.baseURL)/podcasts/\(id)?sort=recent_first")
                 return URL(string: "\(APIConfig.baseURL)/podcasts/\(id)?sort=recent_first")
