@@ -19,7 +19,8 @@ struct PodcastPlayerView: View {
     
     private var cancellables = Set<AnyCancellable>()
     
-    @StateObject private var playerManager = PlayerManager()
+    @EnvironmentObject private var playerManager: PlayerManager
+    // @StateObject private var playerManager = PlayerManager()
     
     var body: some View {
         VStack {
@@ -96,6 +97,14 @@ struct PodcastPlayerView: View {
             .padding()
         }
         .onAppear {
+            // Only setup the player if it's not already playing this URL
+            if playerManager.currentURL != audioURL {
+                playerManager.setupPlayer(with: audioURL)
+            }
+            setupTimeObserver()
+        }
+        /*
+        .onAppear {
             playerManager.setupPlayer(with: audioURL)
             setupTimeObserver()
             // setupDurationObserver()
@@ -103,6 +112,7 @@ struct PodcastPlayerView: View {
         .onDisappear {
             playerManager.removeTimeObserver()
         }
+        */
     }
     
     private func setupTimeObserver() {

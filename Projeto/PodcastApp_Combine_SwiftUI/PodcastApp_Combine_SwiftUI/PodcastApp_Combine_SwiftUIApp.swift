@@ -9,9 +9,12 @@ import SwiftUI
 
 @main
 struct PodcastApp_Combine_SwiftUIApp: App {
+    @StateObject private var playerManager = PlayerManager()
+    
     var body: some Scene {
-        WindowGroup {
-            ContentView()
-        }
-    }
+       WindowGroup {
+           ContentView()
+               .environmentObject(playerManager)
+       }
+   }
 }

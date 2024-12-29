@@ -11,6 +11,8 @@ import Combine
 class PlayerManager: ObservableObject {
     @Published var duration: TimeInterval = 0
     
+    private(set) var currentURL: URL?
+    
     static let shared = PlayerManager()
     var player: AVPlayer?
     private var timeObserverToken: Any?
@@ -35,31 +37,34 @@ class PlayerManager: ObservableObject {
     }
         
     func setupPlayer(with url: URL) {
-            if player == nil || player?.currentItem?.asset as? AVURLAsset != AVURLAsset(url: url) {
-                let playerItem = AVPlayerItem(url: url)
-                player = AVPlayer(playerItem: playerItem)
+        guard currentURL != url else { return }
+        currentURL = url
+        
+        if player == nil || player?.currentItem?.asset as? AVURLAsset != AVURLAsset(url: url) {
+            let playerItem = AVPlayerItem(url: url)
+            player = AVPlayer(playerItem: playerItem)
+             
+            // Setup duration observer
+            playerItem.publisher(for: \.duration)
+                .map { duration -> TimeInterval in
+                    let timeInterval = CMTimeGetSeconds(duration)
+                    return timeInterval.isNaN ? 0 : timeInterval
+                }
+                .receive(on: DispatchQueue.main)
+                .sink { [weak self] newDuration in
+                    self?.duration = newDuration
+                }
+                .store(in: &cancellables)
                 
-                // Setup duration observer
-                playerItem.publisher(for: \.duration)
-                    .map { duration -> TimeInterval in
-                        let timeInterval = CMTimeGetSeconds(duration)
-                        return timeInterval.isNaN ? 0 : timeInterval
-                    }
-                    .receive(on: DispatchQueue.main)
-                    .sink { [weak self] newDuration in
-                        self?.duration = newDuration
-                    }
-                    .store(in: &cancellables)
-                    
-                // Add audio interruption handling
-                NotificationCenter.default.addObserver(
-                    self,
-                    selector: #selector(handleInterruption),
-                    name: AVAudioSession.interruptionNotification,
-                    object: nil
-                )
-            }
+            // Add audio interruption handling
+            NotificationCenter.default.addObserver(
+                self,
+                selector: #selector(handleInterruption),
+                name: AVAudioSession.interruptionNotification,
+                object: nil
+            )
         }
+    }
     
     @objc private func handleInterruption(notification: Notification) {
         guard let userInfo = notification.userInfo,
